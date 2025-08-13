@@ -1,0 +1,18 @@
+# Core
+pandas>=2.1.0
+numpy>=1.25.0
+pyyaml>=6.0
+pydantic>=2.5.0
+
+# Optional logging / visualization
+wandb>=0.15.0
+tqdm>=4.66.0
+
+# Date & time handling
+python-dateutil>=2.9.0
+
+# CLI utilities (if needed)
+click>=8.2.0
+
+# JSONL handling
+jsonlines>=3.1.0
