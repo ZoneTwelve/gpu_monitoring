@@ -1,0 +1,25 @@
+# Use Habana Gaudi official PyTorch container as base (supports HL SDK)
+FROM vault.habana.ai/gaudi-docker/1.21.3/ubuntu24.04/habanalabs/pytorch-installer-2.6.0:latest
+
+# Set working directory
+WORKDIR /app
+
+# Copy your project files
+COPY . /app
+
+# Install Python dependencies
+RUN pip install --upgrade pip && \
+    pip install -r requirements.txt
+
+# Optional: install wandb if using W&B logging
+RUN pip install wandb
+
+# Expose a port if needed for monitoring server (optional)
+# EXPOSE 8080
+
+# Set environment variables for Gaudi/HPU if needed
+ENV HABANA_USE_PREEMPTION=1
+ENV HPU_ON=1
+
+# Default command
+CMD ["python", "main.py"]
