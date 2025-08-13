@@ -2,18 +2,45 @@ import csv
 import json
 from abc import ABC, abstractmethod
 from typing import List
-from .dummy_habanalabs import DummyGaudiCli
+from .dummy import DummyGaudiCli
+
+import habanalabs
+from datetime import datetime
 
 class BaseMonitor(ABC):
     @abstractmethod
     def record(self):
         pass
 
+class GaudiCli:
+    def __init__(self):
+        self.devices = habanalabs.device_list()
+
+    def query(self):
+        metrics = []
+        for device in self.devices:
+            device_info = device.get_info()
+            metrics.append({
+                "timestamp": datetime.utcnow().strftime("%a %b %d %H:%M:%S UTC %Y"),
+                "uuid": device_info.get("uuid", "unknown"),
+                "bus": device_info.get("bus", "unknown"),
+                "temp": device_info.get("temperature", -1),
+                "util_aip": device_info.get("utilization_aip", -1),
+                "util_mem": device_info.get("utilization_mem", -1),
+                "mem_total": device_info.get("memory_total", -1),
+                "mem_free": device_info.get("memory_free", -1),
+                "mem_used": device_info.get("memory_used", -1),
+                "power": device_info.get("power", -1),
+                "serial": device_info.get("serial", "unknown"),
+                "index": device_info.get("index", -1)
+            })
+        return metrics
+
 class GaudiMonitor(BaseMonitor):
     def __init__(self, output="csv", filename="gaudi_metrics.csv", use_dummy=True):
         self.output = output
         self.filename = filename
-        self.cli = DummyGaudiCli() if use_dummy else None  # replace with real CLI later
+        self.cli = GaudiCli() if not use_dummy else DummyGaudiCli()
         self._init_output()
 
     def _init_output(self):
