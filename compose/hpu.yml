@@ -1,0 +1,18 @@
+version: "3.9"
+
+services:
+  hpu-monitor:
+    build:
+      context: .
+      dockerfile: docker/dockerfile.hpu
+    container_name: hpu-monitor
+    network_mode: "host"   # Use host networking to access HPU devices
+    restart: unless-stopped
+    environment:
+      - HABANA_USE_PREEMPTION=1
+      - HPU_ON=1
+    volumes:
+      - ../:/app           # Mount project directory for live code
+      - /tmp:/tmp          # Optional: mount tmp for logging or temp files
+      - /dev:/dev
+    command: ["python", "main.py"]
